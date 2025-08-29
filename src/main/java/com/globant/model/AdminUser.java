@@ -1,7 +1,11 @@
 package com.globant.model;
 
 public class AdminUser extends User{
-    public AdminUser(Long id, String name, String lastName, String email, String password) {
-        super(id, name, lastName, email, password);
+    private final String role = "admin";
+    public AdminUser(String name, String lastName, String email, String password) {
+        super(name, lastName, email, password);
+    }
+    public String getRole() {
+        return role;
     }
 }

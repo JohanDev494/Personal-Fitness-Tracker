@@ -5,7 +5,6 @@ import com.globant.service.UserService;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private Long id;
     private String name;
     private String lastname;
     private String email;
@@ -13,8 +12,7 @@ public class User implements Serializable {
 
     public User(){}
 
-    public User(Long id, String email, String password, String name, String lastname) {
-        this.id = id;
+    public User(String email, String password, String name, String lastname) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
@@ -47,12 +45,5 @@ public class User implements Serializable {
     }
     public void setLastname(String lastname) {
         this.lastname = lastname;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
     }
 }

@@ -15,26 +15,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(String name, String lastname, String email, String password) {
-        Optional<User> existing = userRepository.findByEmail(email);
+    public void registerUser(User  user) {
+        Optional<User> existing = userRepository.findByEmail(user.getEmail());
         if (existing.isPresent()) {
             throw new IllegalArgumentException("The email entered is already registered"); // Error de registro
         }
 
-        User newUser = new User();
-        newUser.setName(name);
-        newUser.setLastname(lastname);
-        newUser.setEmail(email);
-        newUser.setPassword(password);
-
-        userRepository.save(newUser);
+        userRepository.save(user);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
 
 //    @Override
 //    public List<User> listUsers() {

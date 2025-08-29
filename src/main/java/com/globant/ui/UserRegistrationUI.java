@@ -1,5 +1,6 @@
 package com.globant.ui;
 
+import com.globant.model.RegularUser;
 import com.globant.service.UserService;
 
 import java.util.ArrayList;
@@ -24,8 +25,10 @@ public class UserRegistrationUI {
         String email = promptEmail();
         String password = promptPassword();
 
+        RegularUser regularUser = new RegularUser(name, lastname, email, password);
         try {
-            userService.registerUser(name, lastname, email, password);
+
+            userService.registerUser(regularUser);
             System.out.println("✅ User registered successfully!");
         } catch (Exception e) {
             System.out.println("⚠️ " + e.getMessage());

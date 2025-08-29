@@ -1,5 +1,6 @@
 package com.globant;
 
+import com.globant.model.AdminUser;
 import com.globant.model.User;
 import com.globant.repository.UserRepository;
 import com.globant.repository.impl.UserFileRepository;
@@ -10,8 +11,6 @@ import com.globant.storage.impl.FileStorage;
 import com.globant.storage.impl.JsonFileStorage;
 import com.globant.ui.UserConsoleUI;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
         Storage<User> userStorage = new JsonFileStorage<>("users.json", User.class);
@@ -28,12 +27,13 @@ public class Main {
     private static void createDefaultAdmin(UserService userService) {
         String adminEmail = "admin@system.com";
         if (userService.findByEmail(adminEmail).isEmpty()) {
-            userService.registerUser(
+            AdminUser admin = new AdminUser(
                     "Admin",
                     "System",
                     "a@a.test",
                     "Admin123"
             );
+            userService.registerUser(admin);
             System.out.println("⚙️ Default admin user created: " + adminEmail);
         }
     }
