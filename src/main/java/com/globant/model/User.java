@@ -1,6 +1,10 @@
 package com.globant.model;
 
-public class User {
+import com.globant.service.UserService;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
     private Long id;
     private String name;
     private String lastname;

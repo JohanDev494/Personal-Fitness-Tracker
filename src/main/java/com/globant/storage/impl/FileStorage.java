@@ -11,7 +11,13 @@ public class FileStorage<T> implements Storage<T> {
 
     public FileStorage(String fileName) {
         this.fileName = fileName;
+//        this.fileName = "data/" + fileName;
+//        File dir = new File("data");
+//        if (!dir.exists()) {
+//            dir.mkdirs();
+//        }
     }
+
 
     @Override
     public void save(List<T> data) {

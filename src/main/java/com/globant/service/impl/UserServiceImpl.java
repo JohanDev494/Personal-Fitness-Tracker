@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     public void registerUser(String name, String lastname, String email, String password) {
         Optional<User> existing = userRepository.findByEmail(email);
         if (existing.isPresent()) {
-            throw new IllegalArgumentException("El nombre de usuario ya existe"); // Error de registro
+            throw new IllegalArgumentException("The email entered is already registered"); // Error de registro
         }
 
         User newUser = new User();
@@ -30,10 +30,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(newUser);
     }
 
-//    @Override
-//    public Optional<User> findById(Long id) {
-//        return userRepository.findById(id);
-//    }
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
 
 //    @Override
