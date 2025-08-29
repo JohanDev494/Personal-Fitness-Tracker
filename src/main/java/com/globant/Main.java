@@ -18,8 +18,23 @@ public class Main {
         UserRepository userRepository = new UserFileRepository(userStorage);
         UserService userService = new UserServiceImpl(userRepository);
 
+        createDefaultAdmin(userService);
+
         UserConsoleUI userConsoleUI = new UserConsoleUI(userService);
 
         userConsoleUI.start();
+    }
+
+    private static void createDefaultAdmin(UserService userService) {
+        String adminEmail = "admin@system.com";
+        if (userService.findByEmail(adminEmail).isEmpty()) {
+            userService.registerUser(
+                    "Admin",
+                    "System",
+                    "a@a.test",
+                    "Admin123"
+            );
+            System.out.println("⚙️ Default admin user created: " + adminEmail);
+        }
     }
 }
