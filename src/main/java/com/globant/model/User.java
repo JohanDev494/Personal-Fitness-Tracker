@@ -2,14 +2,16 @@ package com.globant.model;
 
 public class User {
     private Long id;
-    private String firstname;
+    private String name;
     private String lastname;
     private String email;
     private String password; //hash
 
-    public User(Long id, String email, String password,  String firstname, String lastname) {
+    public User(){}
+
+    public User(Long id, String email, String password, String name, String lastname) {
         this.id = id;
-        this.firstname = firstname;
+        this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
@@ -29,11 +31,11 @@ public class User {
         this.password = password;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getName() {
+        return name;
     }
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLastname() {
