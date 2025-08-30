@@ -6,34 +6,37 @@ import com.globant.repository.UserRepository;
 import com.globant.repository.impl.UserFileRepository;
 import com.globant.service.UserService;
 import com.globant.service.impl.UserServiceImpl;
+import com.globant.session.impl.InMemorySessionManager;
+import com.globant.session.SessionManager;
 import com.globant.storage.Storage;
-import com.globant.storage.impl.FileStorage;
 import com.globant.storage.impl.JsonFileStorage;
-import com.globant.ui.UserConsoleUI;
+import com.globant.ui.ConsoleUI;
 
 public class Main {
     public static void main(String[] args) {
         Storage<User> userStorage = new JsonFileStorage<>("users.json", User.class);
         UserRepository userRepository = new UserFileRepository(userStorage);
         UserService userService = new UserServiceImpl(userRepository);
+        SessionManager sessionManager = new InMemorySessionManager();
 
-        createDefaultAdmin(userService);
+        createDefaultAdmin(userService, userRepository);
 
-        UserConsoleUI userConsoleUI = new UserConsoleUI(userService);
+        ConsoleUI ui = new ConsoleUI(userService, sessionManager);
 
-        userConsoleUI.start();
+        ui.start();
     }
 
-    private static void createDefaultAdmin(UserService userService) {
+    private static void createDefaultAdmin(UserService userService, UserRepository userRepository) {
         String adminEmail = "admin@system.com";
-        if (userService.findByEmail(adminEmail).isEmpty()) {
+        if (userRepository.findByEmail(adminEmail).isEmpty()) {
+        System.out.println("Creating default admin");
             AdminUser admin = new AdminUser(
                     "Admin",
                     "System",
-                    "a@a.test",
+                    adminEmail,
                     "Admin123"
             );
-            userService.registerUser(admin);
+            userRepository.save(admin);
             System.out.println("⚙️ Default admin user created: " + adminEmail);
         }
     }

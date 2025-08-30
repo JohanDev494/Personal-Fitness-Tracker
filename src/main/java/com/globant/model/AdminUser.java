@@ -5,7 +5,4 @@ public class AdminUser extends User{
     public AdminUser(String name, String lastName, String email, String password) {
         super(name, lastName, email, password);
     }
-    public String getRole() {
-        return role;
-    }
 }

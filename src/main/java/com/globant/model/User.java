@@ -5,14 +5,13 @@ import com.globant.service.UserService;
 import java.io.Serializable;
 
 public class User implements Serializable {
+    private String rol;
     private String name;
     private String lastname;
     private String email;
     private String password; //hash
 
-    public User(){}
-
-    public User(String email, String password, String name, String lastname) {
+    public User(String name, String lastname, String email, String password ) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
@@ -45,5 +44,13 @@ public class User implements Serializable {
     }
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

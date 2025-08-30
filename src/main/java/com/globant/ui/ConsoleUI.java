@@ -1,20 +1,19 @@
 package com.globant.ui;
 
-import com.globant.model.User;
 import com.globant.service.UserService;
+import com.globant.session.SessionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
-public class UserConsoleUI {
+public class ConsoleUI {
     private final UserService userService;
     private final Scanner scanner;
+    private final SessionManager sessionManager;
 
-    public UserConsoleUI(UserService userService) {
+    public ConsoleUI(UserService userService, SessionManager sessionManager) {
         this.userService = userService;
         this.scanner = new Scanner(System.in);
+        this.sessionManager = sessionManager;
     }
 
     public void start() {
@@ -30,9 +29,7 @@ public class UserConsoleUI {
 
             switch (option) {
                 case 1 -> new UserRegistrationUI(userService, scanner).show();
-                case 2 -> {
-                    System.out.println("login");
-                }
+                case 2 -> new LoginUI(userService, scanner, sessionManager).show();
                 case 3 -> {
                     System.out.println("exit");
                     return;

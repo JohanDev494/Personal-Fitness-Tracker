@@ -23,6 +23,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+    @Override
+    public Optional<User> login(String email, String password) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            if (user.get().getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return Optional.empty();
+    }
 
     @Override
     public Optional<User> findByEmail(String email) {
