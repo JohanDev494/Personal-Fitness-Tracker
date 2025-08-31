@@ -39,3 +39,5 @@ build/
 
 ### storage files ###
 users.json
+exercises.json
+workouts.json

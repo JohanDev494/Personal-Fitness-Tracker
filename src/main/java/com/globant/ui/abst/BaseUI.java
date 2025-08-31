@@ -1,4 +1,4 @@
-package com.globant.ui;
+package com.globant.ui.abst;
 
 import com.globant.service.UserService;
 import com.globant.session.SessionManager;

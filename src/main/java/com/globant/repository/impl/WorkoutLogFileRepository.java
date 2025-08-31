@@ -1,67 +1,38 @@
 package com.globant.repository.impl;
 
-import com.globant.model.WorkoutLog;
 import com.globant.model.User;
+import com.globant.model.WorkoutLog;
 import com.globant.repository.WorkoutLogRepository;
 import com.globant.storage.Storage;
-import com.globant.storage.impl.FileStorage;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class WorkoutLogFileRepository implements WorkoutLogRepository {
-    private final Storage<WorkoutLog> storage;
-    private final Map<Long, WorkoutLog> cache = new HashMap<>();
-    private long idCounter = 1L;
 
-    public WorkoutLogFileRepository(String filename) {
-        this.storage = new FileStorage<>(filename);
-        loadCache();
+    private final Storage<WorkoutLog> storage;
+    private final List<WorkoutLog> logs;
+
+    public WorkoutLogFileRepository(Storage<WorkoutLog> storage) {
+        this.storage = storage;
+        this.logs = storage.load();
     }
 
     @Override
     public void save(WorkoutLog log) {
-        if (log.getId() == null) {
-            log.setId(idCounter++);
-        }
-        cache.put(log.getId(), log);
-        persist();
+        logs.add(log);
+        storage.save(logs);
     }
 
     @Override
-    public List<WorkoutLog> findAll() {
-        return new ArrayList<>(cache.values());
+    public List<WorkoutLog> getAllLogs() {
+        return List.copyOf(logs);
     }
 
     @Override
-    public List<WorkoutLog> findByUser(User user) {
-        return cache.values().stream()
-                .filter(log -> log.getUser().equals(user))
+    public List<WorkoutLog> getLogsByUser(User user) {
+        return logs.stream()
+                .filter(l -> l.getUser().getEmail().equals(user.getEmail()))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<WorkoutLog> findById(Long id) {
-        return Optional.ofNullable(cache.get(id));
-    }
-
-    @Override
-    public void delete(Long id) {
-        cache.remove(id);
-        persist();
-    }
-
-    private void persist() {
-        storage.save(new ArrayList<>(cache.values()));
-    }
-
-    private void loadCache() {
-        List<WorkoutLog> logs = storage.load();
-        logs.forEach(log -> {
-            cache.put(log.getId(), log);
-            if (log.getId() >= idCounter) {
-                idCounter = log.getId() + 1;
-            }
-        });
     }
 }

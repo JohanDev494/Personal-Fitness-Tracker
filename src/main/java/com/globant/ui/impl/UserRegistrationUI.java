@@ -1,16 +1,17 @@
-package com.globant.ui;
+package com.globant.ui.impl;
 
 import com.globant.model.RegularUser;
 import com.globant.service.UserService;
+import com.globant.ui.UI;
+import com.globant.ui.abst.BaseUInoSession;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class UserRegistrationUI {
-    private final UserService userService;
-    private final Scanner scanner;
-
+public class UserRegistrationUI implements UI {
+    private UserService userService;
+    private Scanner scanner;
     private final String EMAIL_REGEX =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
