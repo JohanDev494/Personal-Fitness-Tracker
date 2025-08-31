@@ -68,6 +68,7 @@ public class Main {
             );
             userRepository.save(admin);
             System.out.println("⚙️ Default admin user created: " + adminEmail);
+
         }
     }
 
@@ -109,7 +110,6 @@ public class Main {
                     .findFirst().orElse(null);
 
             if (pushUps != null && squats != null && plank != null && lunges != null && burpees != null) {
-                // === Workout 1 ===
                 WorkoutExercise we1 = new WorkoutExercise(pushUps);
                 we1.setSets(3);
                 we1.setRepetitions(12);
@@ -129,7 +129,6 @@ public class Main {
                         "Do 3 rounds"
                 );
 
-                // === Workout 2 ===
                 WorkoutExercise we4 = new WorkoutExercise(lunges);
                 we4.setSets(3);
                 we4.setRepetitions(10);
@@ -145,7 +144,6 @@ public class Main {
                         "Keep good form"
                 );
 
-                // === Workout 3 ===
                 WorkoutExercise we6 = new WorkoutExercise(burpees);
                 we6.setSets(3);
                 we6.setRepetitions(12);
@@ -161,7 +159,6 @@ public class Main {
                         "Stay hydrated!"
                 );
 
-                // Guardar todos
                 workoutRepo.save(workout1);
                 workoutRepo.save(workout2);
                 workoutRepo.save(workout3);

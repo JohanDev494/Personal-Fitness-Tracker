@@ -1,75 +1,66 @@
 package com.globant.ui.impl;
 
+import com.globant.exception.InvalidInputException;
 import com.globant.model.RegularUser;
 import com.globant.service.UserService;
 import com.globant.ui.UI;
-import com.globant.ui.abst.BaseUInoSession;
+import com.globant.util.InputHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class UserRegistrationUI implements UI {
-    private UserService userService;
-    private Scanner scanner;
+    private final UserService userService;
+    private final InputHelper inputHelper;
+
     private final String EMAIL_REGEX =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
-    public UserRegistrationUI(UserService userService, Scanner scanner) {
+    public UserRegistrationUI(UserService userService, InputHelper inputHelper) {
         this.userService = userService;
-        this.scanner = scanner;
+        this.inputHelper = inputHelper;
     }
 
+    @Override
     public void show() {
-        String name = promptName();
-        String lastname = promptLastName();
-        String email = promptEmail();
-        String password = promptPassword();
+        while (true) {
+            try {
+                String name = promptName();
+                String lastname = promptLastName();
+                String email = promptEmail();
+                String password = promptPassword();
 
-        RegularUser regularUser = new RegularUser(name, lastname, email, password);
-        try {
+                RegularUser regularUser = new RegularUser(name, lastname, email, password);
 
-            userService.registerUser(regularUser);
-            System.out.println("✅ User registered successfully!");
-        } catch (Exception e) {
-            System.out.println("⚠️ " + e.getMessage());
+                userService.registerUser(regularUser);
+                System.out.println("✅ User registered successfully!");
+                return;
+            } catch (InvalidInputException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("❌ Unexpected error during registration: " + e.getMessage());
+            }
         }
     }
 
     // ==== Prompt methods ====
 
     private String promptName() {
-        String name;
-        do {
-            System.out.print("Enter name: ");
-            name = scanner.nextLine();
-            if (name.isBlank()) {
-                System.out.println("⚠️ Name cannot be empty.");
-            }
-        } while (name.isBlank());
-        return name;
+        return inputHelper.readString("Enter name: ");
     }
 
     private String promptLastName() {
-        String lastname;
-        do {
-            System.out.print("Enter last name: ");
-            lastname = scanner.nextLine();
-            if (lastname.isBlank()) {
-                System.out.println("⚠️ Last name cannot be empty.");
-            }
-        } while (lastname.isBlank());
-        return lastname;
+        return inputHelper.readString("Enter last name: ");
     }
 
     private String promptEmail() {
         String email;
         do {
-            System.out.print("Enter email: ");
-            email = scanner.nextLine();
+            email = inputHelper.readString("Enter email: ");
 
             if (!email.matches(EMAIL_REGEX)) {
                 System.out.println("⚠️ Invalid email format.");
+                System.out.println("The email should be like: juanito@example.com");
                 email = null;
             } else if (userService.findByEmail(email).isPresent()) {
                 System.out.println("⚠️ This email is already registered.");
@@ -82,8 +73,7 @@ public class UserRegistrationUI implements UI {
     private String promptPassword() {
         String password;
         do {
-            System.out.print("Enter password: ");
-            password = scanner.nextLine();
+            password = inputHelper.readString("Enter password: ");
 
             List<String> passwordErrors = validatePassword(password);
             if (!passwordErrors.isEmpty()) {

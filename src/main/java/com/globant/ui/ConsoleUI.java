@@ -1,10 +1,12 @@
 package com.globant.ui;
 
+import com.globant.exception.InvalidInputException;
 import com.globant.service.ExerciseService;
 import com.globant.service.UserService;
 import com.globant.service.WorkoutLogService;
 import com.globant.service.WorkoutService;
 import com.globant.session.SessionManager;
+import com.globant.util.InputHelper;
 import com.globant.ui.impl.LoginUI;
 import com.globant.ui.impl.UserRegistrationUI;
 
@@ -16,7 +18,7 @@ public class ConsoleUI {
     private final WorkoutService workoutService;
     private final WorkoutLogService workoutLogService;
     private final SessionManager sessionManager;
-    private final Scanner scanner;
+    private final InputHelper inputHelper;
 
     public ConsoleUI(
             UserService userService,
@@ -30,34 +32,42 @@ public class ConsoleUI {
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
         this.sessionManager = sessionManager;
-        this.scanner = new Scanner(System.in);
+
+        Scanner scanner = new Scanner(System.in);
+        this.inputHelper = new InputHelper(scanner);
     }
 
     public void start() {
         while (true) {
-            System.out.println("\n==== Welcome to the Personal Fitness Tracker ====");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-            System.out.print("Please select an option: ");
+            try {
+                System.out.println("\n==== Welcome to the Personal Fitness Tracker ====");
+                System.out.println("1. Register");
+                System.out.println("2. Login");
+                System.out.println("3. Exit");
 
-            int option = scanner.nextInt();
-            scanner.nextLine();
+                int option = inputHelper.readInt("Please select an option: ", 1, 3);
 
-            switch (option) {
-                case 1 -> new UserRegistrationUI(userService, scanner).show();
-                case 2 -> new LoginUI(
-                        userService,
-                        exerciseService,
-                        workoutService,
-                        workoutLogService,
-                        scanner,
-                        sessionManager).show();
-                case 3 -> {
-                    System.out.println("exit");
-                    return;
+                switch (option) {
+                    case 1 -> new UserRegistrationUI(userService, inputHelper).show();
+                    case 2 -> new LoginUI(
+                            userService,
+                            exerciseService,
+                            workoutService,
+                            workoutLogService,
+                            inputHelper,
+                            sessionManager).show();
+                    case 3 -> {
+                        System.out.println("👋 Exiting the system. Goodbye!");
+                        return;
+                    }
+                    default -> System.out.println("⚠️ Invalid option, try again.");
                 }
-                default -> System.out.println("Invalid option, try again.");
+
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("❌ Unexpected error: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

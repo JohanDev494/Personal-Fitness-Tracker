@@ -41,3 +41,4 @@ build/
 users.json
 exercises.json
 workouts.json
+workoutLogs.json

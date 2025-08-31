@@ -6,9 +6,13 @@ import com.globant.service.UserService;
 import com.globant.service.WorkoutLogService;
 import com.globant.service.WorkoutService;
 import com.globant.session.SessionManager;
+import com.globant.util.InputHelper;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 
 public class WorkoutLogUI {
     private final UserService userService;
@@ -16,7 +20,8 @@ public class WorkoutLogUI {
     private final WorkoutLogService workoutLogService;
     private final ExerciseService exerciseService;
     private final SessionManager sessionManager;
-    private final Scanner scanner;
+    private final InputHelper inputHelper;
+    private final DateTimeFormatter formatter;
 
     public WorkoutLogUI(
             UserService userService,
@@ -24,14 +29,15 @@ public class WorkoutLogUI {
             WorkoutLogService workoutLogService,
             ExerciseService exerciseService,
             SessionManager sessionManager,
-            Scanner scanner)
-    {
+            InputHelper inputHelper
+    ) {
         this.userService = userService;
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
         this.exerciseService = exerciseService;
         this.sessionManager = sessionManager;
-        this.scanner = scanner;
+        this.inputHelper = inputHelper;
+        this.formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     }
 
     public void logWorkout(Workout workout) {
@@ -42,20 +48,35 @@ public class WorkoutLogUI {
         }
 
         System.out.println("\n=== Logging Workout: " + workout.getName() + " ===");
-        Map<String, Integer> timePerExercise = new HashMap<>();
 
+        Map<String, Integer> timePerExercise = new HashMap<>();
         int totalTime = 0;
+
         for (WorkoutExercise we : workout.getWorkoutExercise()) {
             Exercise exercise = we.getExercise();
-            System.out.print("Enter time (minutes) for " + exercise.getName() + ": ");
-            int minutes = scanner.nextInt();
-            scanner.nextLine();
+            Integer minutes;
+            do {
+                try {
+                    minutes = inputHelper.readInt(
+                            "Enter time (minutes) for " + exercise.getName() + ": ",
+                            0,
+                            Integer.MAX_VALUE
+                    );
+                } catch (RuntimeException e) {
+                    System.out.println(e.getMessage());
+                    minutes = null;
+                } catch (Exception e) {
+                    System.out.println("❌ Unexpected error during workout log: " + e.getMessage());
+                    minutes = null;
+                }
+            } while (minutes == null);
             timePerExercise.put(exercise.getName(), minutes);
             totalTime += minutes;
         }
+
         System.out.println("Total time for " + workout.getName() + ": " + totalTime);
 
-        String now = LocalDateTime.now().toString();
+        String now = LocalDateTime.now().format(formatter);
         WorkoutLog log = new WorkoutLog(
                 currentUser.get(),
                 now,
@@ -66,13 +87,14 @@ public class WorkoutLogUI {
         workoutLogService.save(log);
 
         System.out.println("✅ Workout log saved!");
+
         new MainMenuUI(
                 userService,
                 exerciseService,
                 workoutService,
                 workoutLogService,
                 sessionManager,
-                scanner
+                inputHelper
         ).show();
     }
 }

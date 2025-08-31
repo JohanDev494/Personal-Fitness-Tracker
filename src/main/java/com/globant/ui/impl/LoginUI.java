@@ -1,23 +1,23 @@
 package com.globant.ui.impl;
 
+import com.globant.exception.InvalidInputException;
 import com.globant.model.User;
 import com.globant.service.ExerciseService;
 import com.globant.service.UserService;
-
 import com.globant.service.WorkoutLogService;
 import com.globant.service.WorkoutService;
 import com.globant.session.SessionManager;
 import com.globant.ui.UI;
+import com.globant.util.InputHelper;
 
 import java.util.Optional;
-import java.util.Scanner;
 
 public class LoginUI implements UI {
     private final UserService userService;
     private final ExerciseService exerciseService;
     private final WorkoutService workoutService;
     private final WorkoutLogService workoutLogService;
-    private final Scanner scanner;
+    private final InputHelper inputHelper;
     private final SessionManager sessionManager;
 
     public LoginUI(
@@ -25,25 +25,31 @@ public class LoginUI implements UI {
             ExerciseService exerciseService,
             WorkoutService workoutService,
             WorkoutLogService workoutLogService,
-            Scanner scanner,
+            InputHelper inputHelper,
             SessionManager sessionManager
     ) {
         this.userService = userService;
         this.exerciseService = exerciseService;
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
-        this.scanner = scanner;
+        this.inputHelper = inputHelper;
         this.sessionManager = sessionManager;
     }
 
+    @Override
     public void show() {
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
+        try {
+            String email = inputHelper.readString("Enter email: ");
+            String password = inputHelper.readString("Enter password: ");
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+            login(email, password);
 
-        login(email, password);
+        } catch (InvalidInputException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("❌ Unexpected error during login: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void login(String email, String password) {
@@ -63,7 +69,7 @@ public class LoginUI implements UI {
                     workoutService,
                     workoutLogService,
                     sessionManager,
-                    scanner).show();
+                    inputHelper).show();
         } else {
             System.out.println("⚠️ Invalid credentials.");
         }

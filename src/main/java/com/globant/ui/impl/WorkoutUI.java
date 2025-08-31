@@ -1,7 +1,5 @@
 package com.globant.ui.impl;
 
-import com.globant.model.Exercise;
-import com.globant.model.User;
 import com.globant.model.Workout;
 import com.globant.model.WorkoutExercise;
 import com.globant.service.ExerciseService;
@@ -10,9 +8,9 @@ import com.globant.service.WorkoutLogService;
 import com.globant.service.WorkoutService;
 import com.globant.session.SessionManager;
 import com.globant.ui.UI;
+import com.globant.util.InputHelper;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class WorkoutUI implements UI {
     private final UserService userService;
@@ -20,7 +18,7 @@ public class WorkoutUI implements UI {
     private final WorkoutLogService workoutLogService;
     private final ExerciseService exerciseService;
     private final SessionManager sessionManager;
-    private final Scanner scanner;
+    private final InputHelper inputHelper;
 
     public WorkoutUI(
             UserService userService,
@@ -28,85 +26,84 @@ public class WorkoutUI implements UI {
             WorkoutLogService workoutLogService,
             ExerciseService exerciseService,
             SessionManager sessionManager,
-            Scanner scanner)
+            InputHelper inputHelper)
     {
         this.userService = userService;
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
         this.exerciseService = exerciseService;
         this.sessionManager = sessionManager;
-        this.scanner = scanner;
+        this.inputHelper = inputHelper;
     }
 
     public void show() {
-        System.out.println("\n=== Workout Menu ===");
         listWorkouts();
     }
 
     private void listWorkouts() {
         List<Workout> workouts = workoutService.getAllWorkouts();
         if (workouts.isEmpty()) {
-            System.out.println("No workouts available.");
+            System.out.println("⚠️ No workouts available.");
             return;
         }
-
-        System.out.println("=== Workouts ===");
-        int index = 1;
-        for (Workout workout : workouts) {
-            System.out.println(index + ". " + workout.getName() + " - " + workout.getDescription());
-            index++;
-        }
-
-        int option = -1;
-        do {
-            System.out.print("Select a workout to see the details or 0 to back: ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isEmpty()) {
-                System.out.println("⚠️ Please enter a number.");
-                continue;
+        while (true){
+            System.out.println("\n=== Workouts ===");
+            for (int i = 0; i < workouts.size(); i++) {
+                Workout workout = workouts.get(i);
+                System.out.printf("%d. %s - %s%n", i + 1, workout.getName(), workout.getDescription());
             }
 
             try {
-                option = Integer.parseInt(input);
+                int option = inputHelper.readInt("Select a workout (0 to back): ", 0, workouts.size());
                 if (option == 0) {
-                    break;
-                } else if (option > 0 && option <= workouts.size()) {
-                    detailsWorkout(workouts.get(option - 1));
-                } else {
-                    System.out.println("Invalid option.");
+                    return;
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("⚠️ Invalid input. Please enter a number.");
+                detailsWorkout(workouts.get(option - 1));
+            }catch (RuntimeException e){
+                System.out.println(e.getMessage());
+            }catch (Exception e){
+                System.out.println("⚠️ Invalid option, try again.");
             }
-        } while (option != 0);
+        }
     }
 
 
     private void detailsWorkout(Workout workout) {
-        System.out.println("\n=== Workout Details ===");
-        System.out.println("Name: " + workout.getName());
-        System.out.println("Description: " + workout.getDescription());
-        if (workout.getNote() != null && !workout.getNote().isBlank()) {
-            System.out.println("Note: " + workout.getNote());
-        }
-        System.out.println("Exercises:");
-        for (WorkoutExercise we : workout.getWorkoutExercise()) {
-            System.out.printf(" - %s (Sets: %d, Reps: %d)%n",
-                    we.getExercise().getName(), we.getSets(), we.getRepetitions());
-        }
-        System.out.println("Enter 1 for log this workout or 0 for back: ");
-        int option = Integer.parseInt(scanner.nextLine());
+        while(true) {
+            System.out.println("\n=== Workout Details ===");
+            System.out.println("Name: " + workout.getName());
+            System.out.println("Description: " + workout.getDescription());
+            if (workout.getNote() != null && !workout.getNote().isBlank()) {
+                System.out.println("Note: " + workout.getNote());
+            }
+            System.out.println("Exercises:");
+            for (WorkoutExercise we : workout.getWorkoutExercise()) {
+                System.out.printf(" - %s (Sets: %d, Reps: %d)%n",
+                        we.getExercise().getName(), we.getSets(), we.getRepetitions());
+            }
+            System.out.println("\n1. Log this workout.");
+            System.out.println("0. Back.");
+            try {
+                int option = inputHelper.readInt("Choose option: ", 0, 1);
 
-        if (option == 1) {
-            new WorkoutLogUI(
-                    userService,
-                    workoutService,
-                    workoutLogService,
-                    exerciseService,
-                    sessionManager,
-                    scanner).logWorkout(workout);
-            return;
+                if (option == 0 ) {
+                    return;
+                }
+
+                if (option == 1) {
+                    new WorkoutLogUI(
+                            userService,
+                            workoutService,
+                            workoutLogService,
+                            exerciseService,
+                            sessionManager,
+                            inputHelper).logWorkout(workout);
+                }
+            }catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }catch (Exception e) {
+                System.out.println("⚠️ Invalid option, try again.");
+            }
         }
     }
 

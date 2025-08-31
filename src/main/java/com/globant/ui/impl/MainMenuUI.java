@@ -1,7 +1,5 @@
 package com.globant.ui.impl;
 
-import com.globant.model.AdminUser;
-import com.globant.model.RegularUser;
 import com.globant.model.User;
 import com.globant.service.ExerciseService;
 import com.globant.service.UserService;
@@ -9,34 +7,33 @@ import com.globant.service.WorkoutLogService;
 import com.globant.service.WorkoutService;
 import com.globant.session.SessionManager;
 import com.globant.ui.UI;
-import com.globant.ui.impl.WorkoutUI;
-import com.globant.ui.abst.BaseUI;
-
-import java.util.Scanner;
+import com.globant.util.InputHelper;
 
 public class MainMenuUI implements UI {
-    private UserService userService;
-    private ExerciseService exerciseService;
-    private WorkoutService workoutService;
-    private WorkoutLogService workoutLogService;
-    private SessionManager sessionManager;
-    private Scanner scanner;
+    private final UserService userService;
+    private final ExerciseService exerciseService;
+    private final WorkoutService workoutService;
+    private final WorkoutLogService workoutLogService;
+    private final SessionManager sessionManager;
+    private final InputHelper inputHelper;
+
     public MainMenuUI(
             UserService userService,
             ExerciseService exerciseService,
             WorkoutService workoutService,
             WorkoutLogService workoutLogService,
             SessionManager sessionManager,
-            Scanner scanner)
-    {
+            InputHelper inputHelper
+    ) {
         this.exerciseService = exerciseService;
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
         this.userService = userService;
         this.sessionManager = sessionManager;
-        this.scanner = scanner;
+        this.inputHelper = inputHelper;
     }
 
+    @Override
     public void show() {
         while (true) {
             User currentUser = sessionManager.getCurrentUser()
@@ -45,24 +42,28 @@ public class MainMenuUI implements UI {
             System.out.println("\n==== Main Menu ====");
             System.out.println("Welcome, " + currentUser.getName() + " (" + currentUser.getRol() + ")");
 
-            if (currentUser.getRol().equals("ADMIN")) {
+            String userRol = currentUser.getRol();
+            if (userRol.equals("ADMIN")) {
                 adminMenu();
-            } else if (currentUser.getRol().equals("USER")) {
+            } else if (userRol.equals("USER")) {
                 regularUserMenu();
             }
 
             System.out.println("0. Logout");
-            System.out.print("Choose an option: ");
-            int option = scanner.nextInt();
-            scanner.nextLine();
-
-            if (option == 0) {
-                sessionManager.logout();
-                System.out.println("👋 Logged out successfully!");
-                return;
-            } else {
-                handleOption(option, currentUser);
-            }
+            try {
+                int max = userRol.equals("ADMIN")? 2:2;
+                int option = inputHelper.readInt("Choose an option: ", 0, max);
+                if (option == 0) {
+                    sessionManager.logout();
+                    System.out.println("👋 Logged out successfully!");
+                    return;
+                } else {
+                    handleOption(option, currentUser);
+                }
+            }catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }catch (Exception e) {
+                System.out.println("⚠️ Invalid option, try again.");            }
         }
     }
 
@@ -91,8 +92,11 @@ public class MainMenuUI implements UI {
                         workoutLogService,
                         exerciseService,
                         sessionManager,
-                        scanner).show();
-                case 2 -> System.out.println("📈 View progress...");
+                        inputHelper).show();
+                case 2 -> new WorkoutLogListUI(
+                        workoutLogService,
+                        sessionManager,
+                        inputHelper).show();
                 default -> System.out.println("⚠️ Invalid option");
             }
         }
