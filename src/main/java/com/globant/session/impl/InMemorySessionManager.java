@@ -24,11 +24,6 @@ public class InMemorySessionManager implements SessionManager {
     }
 
     @Override
-    public boolean isLoggedIn() {
-        return currentUser != null;
-    }
-
-    @Override
     public boolean hasRole(String role) {
         return currentUser != null && role.equalsIgnoreCase(currentUser.getRol());
     }

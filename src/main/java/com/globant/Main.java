@@ -42,7 +42,7 @@ public class Main {
 
         SessionManager sessionManager = new InMemorySessionManager();
 
-//        createDefaultAdmin(userService, userRepository);
+        createDefaultAdmin(userService, userRepository);
         createDefaultExercises(exerciseRepository);
         createDefaultWorkouts(workoutRepository, exerciseRepository);
 
@@ -83,7 +83,6 @@ public class Main {
             System.out.println("✅ Default exercises created");
         }
     }
-
 
     private static void createDefaultWorkouts(WorkoutRepository workoutRepo, ExerciseRepository exerciseRepo) {
         if (workoutRepo.getAll().isEmpty()) {

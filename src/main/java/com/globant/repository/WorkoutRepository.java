@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface WorkoutRepository {
     void save(Workout workout);
+    void saveAll(List<Workout> workouts);
     List<Workout> getAll();
     Optional<Workout> findByName(String name);
 }
+
 

@@ -29,9 +29,4 @@ public class UserFileRepository implements UserRepository {
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
     }
-
-    @Override
-    public List<User> getAllUsers() {
-        return List.copyOf(users);
-    }
 }

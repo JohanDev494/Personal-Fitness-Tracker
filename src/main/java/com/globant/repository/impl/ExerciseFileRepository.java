@@ -34,4 +34,23 @@ public class ExerciseFileRepository implements ExerciseRepository {
                 .filter(e -> e.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
+
+    @Override
+    public void saveAll(List<Exercise> updatedExercises) {
+        exercises.clear();
+        exercises.addAll(updatedExercises);
+        storage.save(exercises);
+    }
+
+    @Override
+    public boolean deleteByName(String name) {
+        Optional<Exercise> exerciseOpt = findByName(name);
+        if (exerciseOpt.isPresent()) {
+            exercises.remove(exerciseOpt.get());
+            storage.save(exercises);
+            return true;
+        }
+        return false;
+    }
+
 }

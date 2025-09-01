@@ -8,6 +8,5 @@ public interface SessionManager {
     void login(User user);
     void logout();
     Optional<User> getCurrentUser();
-    boolean isLoggedIn();
     boolean hasRole(String role);
 }

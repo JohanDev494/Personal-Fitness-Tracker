@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class WorkoutLogUI {
     private final UserService userService;
@@ -22,6 +23,7 @@ public class WorkoutLogUI {
     private final SessionManager sessionManager;
     private final InputHelper inputHelper;
     private final DateTimeFormatter formatter;
+    private final Scanner scanner;
 
     public WorkoutLogUI(
             UserService userService,
@@ -29,7 +31,8 @@ public class WorkoutLogUI {
             WorkoutLogService workoutLogService,
             ExerciseService exerciseService,
             SessionManager sessionManager,
-            InputHelper inputHelper
+            InputHelper inputHelper,
+            Scanner scanner
     ) {
         this.userService = userService;
         this.workoutService = workoutService;
@@ -37,6 +40,7 @@ public class WorkoutLogUI {
         this.exerciseService = exerciseService;
         this.sessionManager = sessionManager;
         this.inputHelper = inputHelper;
+        this.scanner = scanner;
         this.formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     }
 
@@ -94,7 +98,8 @@ public class WorkoutLogUI {
                 workoutService,
                 workoutLogService,
                 sessionManager,
-                inputHelper
+                inputHelper,
+                scanner
         ).show();
     }
 }

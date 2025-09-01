@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface ExerciseService {
     void createExercise(Exercise exercise);
     List<Exercise> getAllExercises();
-    Optional<Exercise> findByName(String name);
+    boolean updateExercise(String oldName, Exercise updatedExercise);
+    boolean deleteExercise(String name);
 }

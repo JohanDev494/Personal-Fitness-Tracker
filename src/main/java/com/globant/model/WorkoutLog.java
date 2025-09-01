@@ -18,11 +18,6 @@ public class WorkoutLog implements Serializable {
         this.totalTime = timePerExercise.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public void logExerciseTime(String exerciseName, int minutes) {
-        timePerExercise.put(exerciseName, minutes);
-        totalTime += minutes;
-    }
-
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 

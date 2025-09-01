@@ -7,27 +7,11 @@ import com.globant.service.WorkoutLogService;
 
 import java.util.List;
 
-public class WorkoutLogServiceImpl implements WorkoutLogService {
-
-    private final WorkoutLogRepository workoutLogRepository;
-
-    public WorkoutLogServiceImpl(WorkoutLogRepository workoutLogRepository) {
-        this.workoutLogRepository = workoutLogRepository;
-    }
+public record WorkoutLogServiceImpl(WorkoutLogRepository workoutLogRepository) implements WorkoutLogService {
 
     @Override
     public void save(WorkoutLog workoutLog) {
         workoutLogRepository.save(workoutLog);
-    }
-
-    @Override
-    public void logWorkout(WorkoutLog workoutLog) {
-        workoutLogRepository.save(workoutLog);
-    }
-
-    @Override
-    public List<WorkoutLog> getAllLogs() {
-        return workoutLogRepository.getAllLogs();
     }
 
     @Override

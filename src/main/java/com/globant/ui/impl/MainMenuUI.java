@@ -9,6 +9,8 @@ import com.globant.session.SessionManager;
 import com.globant.ui.UI;
 import com.globant.util.InputHelper;
 
+import java.util.Scanner;
+
 public class MainMenuUI implements UI {
     private final UserService userService;
     private final ExerciseService exerciseService;
@@ -16,6 +18,7 @@ public class MainMenuUI implements UI {
     private final WorkoutLogService workoutLogService;
     private final SessionManager sessionManager;
     private final InputHelper inputHelper;
+    private final Scanner scanner;
 
     public MainMenuUI(
             UserService userService,
@@ -23,7 +26,8 @@ public class MainMenuUI implements UI {
             WorkoutService workoutService,
             WorkoutLogService workoutLogService,
             SessionManager sessionManager,
-            InputHelper inputHelper
+            InputHelper inputHelper,
+            Scanner scanner
     ) {
         this.exerciseService = exerciseService;
         this.workoutService = workoutService;
@@ -31,6 +35,7 @@ public class MainMenuUI implements UI {
         this.userService = userService;
         this.sessionManager = sessionManager;
         this.inputHelper = inputHelper;
+        this.scanner = scanner;
     }
 
     @Override
@@ -51,8 +56,7 @@ public class MainMenuUI implements UI {
 
             System.out.println("0. Logout");
             try {
-                int max = userRol.equals("ADMIN")? 2:2;
-                int option = inputHelper.readInt("Choose an option: ", 0, max);
+                int option = inputHelper.readInt("Choose an option: ", 0, 2);
                 if (option == 0) {
                     sessionManager.logout();
                     System.out.println("👋 Logged out successfully!");
@@ -68,8 +72,8 @@ public class MainMenuUI implements UI {
     }
 
     private void adminMenu() {
-        System.out.println("1. Manage Users");
-        System.out.println("2. View System Logs");
+        System.out.println("1. Manage Workouts");
+        System.out.println("2. Manage Exercises");
     }
 
     private void regularUserMenu() {
@@ -80,8 +84,17 @@ public class MainMenuUI implements UI {
     private void handleOption(int option, User user) {
         if (user.getRol().equals("ADMIN")) {
             switch (option) {
-                case 1 -> System.out.println("🔧 Managing users...");
-                case 2 -> System.out.println("📜 Viewing system logs...");
+                case 1 -> new WorkoutAdminUI(
+                        workoutService,
+                        exerciseService,
+                        inputHelper,
+                        scanner
+                    ).show();
+                case 2 -> new ExerciseAdminUI(
+                        exerciseService,
+                        inputHelper,
+                        scanner
+                    ).show();
                 default -> System.out.println("⚠️ Invalid option");
             }
         } else if (user.getRol().equals("USER")) {
@@ -92,11 +105,14 @@ public class MainMenuUI implements UI {
                         workoutLogService,
                         exerciseService,
                         sessionManager,
-                        inputHelper).show();
+                        inputHelper,
+                        scanner
+                    ).show();
                 case 2 -> new WorkoutLogListUI(
                         workoutLogService,
                         sessionManager,
-                        inputHelper).show();
+                        inputHelper
+                    ).show();
                 default -> System.out.println("⚠️ Invalid option");
             }
         }

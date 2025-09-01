@@ -7,13 +7,7 @@ import com.globant.service.ExerciseService;
 import java.util.List;
 import java.util.Optional;
 
-public class ExerciseServiceImpl implements ExerciseService {
-
-    private final ExerciseRepository exerciseRepository;
-
-    public ExerciseServiceImpl(ExerciseRepository exerciseRepository) {
-        this.exerciseRepository = exerciseRepository;
-    }
+public record ExerciseServiceImpl(ExerciseRepository exerciseRepository) implements ExerciseService {
 
     @Override
     public void createExercise(Exercise exercise) {
@@ -29,7 +23,19 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public Optional<Exercise> findByName(String name) {
-        return exerciseRepository.findByName(name);
+    public boolean updateExercise(String oldName, Exercise updatedExercise) {
+        Optional<Exercise> exerciseOpt = exerciseRepository.findByName(oldName);
+        if (exerciseOpt.isPresent()) {
+            Exercise existing = exerciseOpt.get();
+            existing.setName(updatedExercise.getName());
+            exerciseRepository.saveAll(exerciseRepository.getAll());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteExercise(String name) {
+        return exerciseRepository.deleteByName(name);
     }
 }

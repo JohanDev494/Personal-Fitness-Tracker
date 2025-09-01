@@ -11,6 +11,7 @@ import com.globant.ui.UI;
 import com.globant.util.InputHelper;
 
 import java.util.Optional;
+import java.util.Scanner;
 
 public class LoginUI implements UI {
     private final UserService userService;
@@ -19,14 +20,15 @@ public class LoginUI implements UI {
     private final WorkoutLogService workoutLogService;
     private final InputHelper inputHelper;
     private final SessionManager sessionManager;
-
+    private final Scanner scanner;
     public LoginUI(
             UserService userService,
             ExerciseService exerciseService,
             WorkoutService workoutService,
             WorkoutLogService workoutLogService,
             InputHelper inputHelper,
-            SessionManager sessionManager
+            SessionManager sessionManager,
+            Scanner scanner
     ) {
         this.userService = userService;
         this.exerciseService = exerciseService;
@@ -34,6 +36,7 @@ public class LoginUI implements UI {
         this.workoutLogService = workoutLogService;
         this.inputHelper = inputHelper;
         this.sessionManager = sessionManager;
+        this.scanner = scanner;
     }
 
     @Override
@@ -69,7 +72,9 @@ public class LoginUI implements UI {
                     workoutService,
                     workoutLogService,
                     sessionManager,
-                    inputHelper).show();
+                    inputHelper,
+                    scanner
+            ).show();
         } else {
             System.out.println("⚠️ Invalid credentials.");
         }

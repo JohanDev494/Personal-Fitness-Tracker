@@ -19,6 +19,7 @@ public class ConsoleUI {
     private final WorkoutLogService workoutLogService;
     private final SessionManager sessionManager;
     private final InputHelper inputHelper;
+    private final Scanner scanner;
 
     public ConsoleUI(
             UserService userService,
@@ -32,8 +33,7 @@ public class ConsoleUI {
         this.workoutService = workoutService;
         this.workoutLogService = workoutLogService;
         this.sessionManager = sessionManager;
-
-        Scanner scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in);
         this.inputHelper = new InputHelper(scanner);
     }
 
@@ -48,14 +48,19 @@ public class ConsoleUI {
                 int option = inputHelper.readInt("Please select an option: ", 1, 3);
 
                 switch (option) {
-                    case 1 -> new UserRegistrationUI(userService, inputHelper).show();
+                    case 1 -> new UserRegistrationUI(
+                            userService,
+                            inputHelper
+                        ).show();
                     case 2 -> new LoginUI(
                             userService,
                             exerciseService,
                             workoutService,
                             workoutLogService,
                             inputHelper,
-                            sessionManager).show();
+                            sessionManager,
+                            scanner
+                    ).show();
                     case 3 -> {
                         System.out.println("👋 Exiting the system. Goodbye!");
                         return;

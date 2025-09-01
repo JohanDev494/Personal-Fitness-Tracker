@@ -1,7 +1,5 @@
 package com.globant.model;
 
-import com.globant.service.UserService;
-
 import java.io.Serializable;
 
 public class User implements Serializable {

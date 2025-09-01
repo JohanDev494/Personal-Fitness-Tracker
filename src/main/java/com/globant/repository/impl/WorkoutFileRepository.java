@@ -23,6 +23,12 @@ public class WorkoutFileRepository implements WorkoutRepository {
     }
 
     @Override
+    public void saveAll(List<Workout> workouts) {
+        this.workouts = workouts;
+        storage.save(this.workouts);
+    }
+
+    @Override
     public List<Workout> getAll() {
         return List.copyOf(workouts);
     }
