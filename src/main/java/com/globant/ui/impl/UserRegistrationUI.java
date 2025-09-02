@@ -25,6 +25,7 @@ public class UserRegistrationUI implements UI {
     public void show() {
         while (true) {
             try {
+                System.out.println("\n===== Register =====");
                 String name = promptName();
                 String lastname = promptLastName();
                 String email = promptEmail();

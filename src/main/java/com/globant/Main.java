@@ -59,7 +59,7 @@ public class Main {
     private static void createDefaultAdmin(UserService userService, UserRepository userRepository) {
         String adminEmail = "admin@system.com";
         if (userRepository.findByEmail(adminEmail).isEmpty()) {
-        System.out.println("Creating default admin");
+        System.out.println("⚙️ Creating default admin");
             AdminUser admin = new AdminUser(
                     "Admin",
                     "System",
@@ -67,7 +67,7 @@ public class Main {
                     "Admin123"
             );
             userRepository.save(admin);
-            System.out.println("⚙️ Default admin user created: " + adminEmail);
+            System.out.println("✅ Default admin user created: " + adminEmail);
 
         }
     }
@@ -163,9 +163,6 @@ public class Main {
                 workoutRepo.save(workout3);
 
                 System.out.println("✅ Default workouts created:");
-                System.out.println(" - " + workout1.getName());
-                System.out.println(" - " + workout2.getName());
-                System.out.println(" - " + workout3.getName());
             }
         }
     }

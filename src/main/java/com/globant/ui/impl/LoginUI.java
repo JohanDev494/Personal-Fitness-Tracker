@@ -42,6 +42,7 @@ public class LoginUI implements UI {
     @Override
     public void show() {
         try {
+            System.out.println("\n===== Login =====");
             String email = inputHelper.readString("Enter email: ");
             String password = inputHelper.readString("Enter password: ");
 
